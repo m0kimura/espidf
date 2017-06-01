@@ -3,6 +3,11 @@
   project=${PWD##*/}
 ##
   if [[ $1 = "build" ]]; then
+    if [[ $2 = "$null" ]]; then
+      starter=""
+    else
+      starter="./starter.sh $2"
+    fi
     docker rm -f fx-${project}
     docker build -t ${project} --build-arg user=$USER .
 
@@ -10,9 +15,13 @@
       --device=/dev/ttyUSB0 \
       -v /home/$USER \
       -v $HOME/Arduino:/home/$USER/source \
-      ${project} ./starter.sh $2
+      ${project} ${starter}
 
   else
-    docker start fx-${project} ./starter.sh $1
+    if [[ $1 = "$null" ]]; then
+      docker start fx-${project}
+    else
+      docker start fx-${project} ./starter.sh $1
+    fi
   fi
 ##
